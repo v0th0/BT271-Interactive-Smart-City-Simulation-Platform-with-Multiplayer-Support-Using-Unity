@@ -230,7 +230,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1866467067076193027
 Transform:
   m_ObjectHideFlags: 0
@@ -558,12 +558,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
   moveSpeed: 5
+  mouseSensitivity: 2
+  minPitch: -40
+  maxPitch: 40
   spawnSpacing: 2
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  spawnRayHeight: 50
-  spawnRayDistance: 100
+  spawnRayHeight: 25
+  spawnRayDistance: 50
+  groundClearance: 0.015
 --- !u!114 &4834966142536402401
 MonoBehaviour:
   m_ObjectHideFlags: 0

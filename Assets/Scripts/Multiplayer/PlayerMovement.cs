@@ -8,6 +8,11 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
 
+    [Header("Mouse Look")]
+    [SerializeField] private float mouseSensitivity = 2f;
+    [SerializeField] private float minPitch = -60f;
+    [SerializeField] private float maxPitch = 60f;
+
     [Header("Spawn")]
     [SerializeField] private float spawnSpacing = 3f;
 
@@ -38,6 +43,12 @@ public class PlayerMovement : NetworkBehaviour
     private Renderer rend;
     private CapsuleCollider capsule;
     private Rigidbody rb;
+
+    // Mouse look state
+    private Camera playerCam;
+    private float yaw;
+    private float pitch;
+    private bool cursorLocked;
 
     private void Awake()
     {
@@ -151,6 +162,16 @@ public class PlayerMovement : NetworkBehaviour
         playerCamera.gameObject.SetActive(true);
         playerCamera.tag = "MainCamera";
 
+        // Mouse look setup
+        playerCam = playerCamera;
+        yaw = transform.eulerAngles.y;
+
+        pitch = playerCam.transform.localEulerAngles.x;
+        if (pitch > 180f) pitch -= 360f;   // convert 0..360 to -180..180
+
+        SetCursorLocked(true);
+
+        // Disable any other MainCamera in the scene
         Camera[] cameras = FindObjectsByType<Camera>(
             FindObjectsInactive.Include,
             FindObjectsSortMode.None
@@ -171,14 +192,19 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner || rb == null)
             return;
 
+        // Esc toggles the mouse so you can click the Exit button
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SetCursorLocked(!cursorLocked);
+
+        if (cursorLocked)
+            HandleMouseLook();
+
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 movement = new Vector3(
-            moveX,
-            0f,
-            moveZ
-        ).normalized;
+        // Move relative to where the player is facing
+        Vector3 movement =
+            (transform.right * moveX + transform.forward * moveZ).normalized;
 
         rb.MovePosition(
             rb.position +
@@ -186,8 +212,32 @@ public class PlayerMovement : NetworkBehaviour
         );
     }
 
+    private void HandleMouseLook()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+
+        // Left/right turns the player body
+        yaw += mouseX;
+        rb.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        // Up/down tilts only the camera
+        pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
+        if (playerCam != null)
+            playerCam.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private void SetCursorLocked(bool locked)
+    {
+        cursorLocked = locked;
+        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !locked;
+    }
+
     public override void OnNetworkDespawn()
     {
+        if (IsOwner) SetCursorLocked(false);
+
         playerColor.OnValueChanged -= OnPlayerColorChanged;
     }
 }

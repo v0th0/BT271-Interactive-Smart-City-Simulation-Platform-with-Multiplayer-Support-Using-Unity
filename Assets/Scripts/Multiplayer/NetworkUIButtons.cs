@@ -13,6 +13,7 @@ public class NetworkUIButtons : MonoBehaviour
     [SerializeField] private Button hostButton;
     [SerializeField] private Button clientButton;
     [SerializeField] private Button serverButton;
+    [SerializeField] private Button exitButton;        // NOT a child of uiRoot
 
     [Header("Player Name")]
     [SerializeField] private TMP_InputField nameInput;
@@ -38,6 +39,12 @@ public class NetworkUIButtons : MonoBehaviour
         hostButton.onClick.AddListener(OnHostClicked);
         clientButton.onClick.AddListener(OnClientClicked);
         serverButton.onClick.AddListener(OnServerClicked);
+
+        if (exitButton != null)
+        {
+            exitButton.onClick.AddListener(OnExitClicked);
+            exitButton.gameObject.SetActive(false);   // hidden until host/join
+        }
 
         if (NetworkManager.Singleton != null)
         {
@@ -71,6 +78,9 @@ public class NetworkUIButtons : MonoBehaviour
         discovery.StartBroadcasting(Port);
         SetStatus("Server running.");
         SetButtonsInteractable(false);
+
+        // A dedicated server has no local client, so the connect callback never fires
+        if (exitButton != null) exitButton.gameObject.SetActive(true);
     }
 
     private void OnClientClicked()
@@ -114,6 +124,20 @@ public class NetworkUIButtons : MonoBehaviour
         SetButtonsInteractable(true);
     }
 
+    private void OnExitClicked()
+    {
+        if (discovery != null) discovery.StopAll();
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
+            NetworkManager.Singleton.Shutdown();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;   // stops Play Mode
+#else
+        Application.Quit();                                // closes the built game
+#endif
+    }
+
     private void CacheName()
     {
         if (nameInput != null && !string.IsNullOrWhiteSpace(nameInput.text))
@@ -148,8 +172,11 @@ public class NetworkUIButtons : MonoBehaviour
     {
         if (NetworkManager.Singleton == null) return;
 
-        if (NetworkManager.Singleton.LocalClientId == clientId && uiRoot != null)
-            uiRoot.SetActive(false);
+        if (NetworkManager.Singleton.LocalClientId == clientId)
+        {
+            if (uiRoot != null) uiRoot.SetActive(false);
+            if (exitButton != null) exitButton.gameObject.SetActive(true);
+        }
     }
 
     private void OnClientDisconnected(ulong clientId)
@@ -161,6 +188,7 @@ public class NetworkUIButtons : MonoBehaviour
             SetButtonsInteractable(true);
             SetStatus("Disconnected.");
             if (uiRoot != null) uiRoot.SetActive(true);
+            if (exitButton != null) exitButton.gameObject.SetActive(false);
         }
     }
 
