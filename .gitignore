@@ -1,0 +1,103 @@
+```gitignore
+# Unity .gitignore
+# Based on the official GitHub Unity template
+
+# Unity generated folders
+.utmp/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# Unity recovery files
+/[Aa]ssets/_Recovery/
+
+# Unity memory captures and recordings
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Unity build output
+/[Bb]uild/
+/[Bb]uilds/
+/Window_Build/
+/Essential_WebGL/
+
+# Unity generated logs
+*.log
+sysinfo.txt
+mono_crash.*
+
+# Blender backup files
+*.blend1
+*.blend1.meta
+
+# JetBrains Rider
+/[Aa]ssets/Plugins/Editor/JetBrains*
+*.DotSettings.user
+.idea/
+
+# Visual Studio and IDE files
+.vs/
+.vscode/
+.gradle/
+.consulo/
+ExportedObj/
+
+# Generated solution and project files
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Generated metadata files
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Unity crash reports
+crashlytics-build.properties
+
+# Build packages
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# Unity test-generated files
+InitTestScene*.unity*
+/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Unity Addressables generated files
+/ServerData
+/[Aa]ssets/StreamingAssets/aa*
+/[Aa]ssets/AddressableAssetsData/link.xml*
+/[Aa]ssets/Addressables_Temp*
+/[Aa]ssets/AddressableAssetsData/*/*.bin*
+
+# Unity Visual Scripting generated files
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+
+# Unity scene dependency cache
+/[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+```
